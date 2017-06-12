@@ -7,11 +7,15 @@ Capybara.default_max_wait_time = 10
 
 session = Capybara::Session.new(:selenium)
 
-# Toggl
+# Read environment
+afas_username = ENV.fetch('AFAS_USERNAME')
+afas_password = ENV.fetch('AFAS_PASSWORD')
+
 toggl_api_token = ENV.fetch('TOGGL_API_TOKEN')
 toggl_reports_since = Time.strptime(ENV.fetch('SINCE'), "%Y-%m-%dT%H:%M:%s").to_datetime
 toggl_reports_until = Time.strptime(ENV.fetch('UNTIL'), "%Y-%m-%dT%H:%M:%s").to_datetime
 
+# Toggl
 toggl_api = TogglV8::API.new(toggl_api_token)
 user = toggl_api.me(all = true)
 workspaces = toggl_api.my_workspaces(user)
@@ -49,7 +53,7 @@ toggl_records.each do |toggl_record|
     afas_description = description
 
     unless afas_project
-      afas_description = [project, description].select { |d| d != '' }.join(": ")
+      afas_description = [project, description].reject { |d| d == '' }.join(": ")
       afas_project = 'ALG'
     end
 
@@ -72,11 +76,8 @@ toggl_records.each do |toggl_record|
 
     # Inloggen
     if session.has_content?('Inloggen')
-      username = ENV.fetch('AFAS_USERNAME')
-      password = ENV.fetch('AFAS_PASSWORD')
-
-      session.fill_in "Gebruikersnaam", with: username
-      session.fill_in "Wachtwoord", with: password
+      session.fill_in "Gebruikersnaam", with: afas_username
+      session.fill_in "Wachtwoord", with: afas_password
       session.click_on "Inloggen"
     end
 
