@@ -9,17 +9,19 @@ session = Capybara::Session.new(:selenium)
 
 # Toggl
 toggl_api_token = ENV.fetch('TOGGL_API_TOKEN')
+toggl_reports_since = Time.strptime(ENV.fetch('SINCE'), "%Y-%m-%dT%H:%M:%s").to_datetime
+toggl_reports_until = Time.strptime(ENV.fetch('UNTIL'), "%Y-%m-%dT%H:%M:%s").to_datetime
 
 toggl_api = TogglV8::API.new(toggl_api_token)
 user = toggl_api.me(all = true)
 workspaces = toggl_api.my_workspaces(user)
-workspace = workspaces.select {|w| w["name"] == "De Praktijk Index"}.first
+workspace = workspaces.select { |w| w[:name] == 'De Praktijk Index' }.first
 
 toggl_reports_api = TogglV8::ReportsV2.new(api_token: toggl_api_token)
 toggl_reports_api.workspace_id = workspace['id']
 toggl_records = toggl_reports_api.details(:json,
-                                          since: DateTime.new(2017, 6, 9, 0, 0, 0),
-                                          until: DateTime.new(2017, 6, 9, 23, 59, 59),
+                                          since: toggl_reports_since,
+                                          until: toggl_reports_until,
                                           order_desc: 'off')
 
 toggl_records.each do |toggl_record|
@@ -47,7 +49,7 @@ toggl_records.each do |toggl_record|
     afas_description = description
 
     unless afas_project
-      afas_description = [project, description].select{ |d| d != '' }.join(": ")
+      afas_description = [project, description].select { |d| d != '' }.join(": ")
       afas_project = 'ALG'
     end
 
