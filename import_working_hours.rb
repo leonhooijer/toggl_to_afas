@@ -17,7 +17,7 @@ toggl_reports_until = Time.strptime(ENV.fetch('UNTIL'), "%Y-%m-%dT%H:%M:%s").to_
 toggl_api = TogglV8::API.new(toggl_api_token)
 user = toggl_api.me(all = true)
 workspaces = toggl_api.my_workspaces(user)
-workspace = workspaces.select { |w| w[:name] == 'De Praktijk Index' }.first
+workspace = workspaces.select { |w| w['name'] == 'De Praktijk Index' }.first
 
 toggl_reports_api = TogglV8::ReportsV2.new(api_token: toggl_api_token)
 toggl_reports_api.workspace_id = workspace['id']
@@ -34,19 +34,6 @@ toggl_records.each do |toggl_record|
     duration = toggl_record["dur"]
     start_time = DateTime.parse(toggl_record["start"])
 
-    seconds = duration / 1000.0
-    minutes = seconds / 60.0
-    hours = minutes / 60.0
-
-    complete_hours = hours.floor
-    complete_minutes = (minutes - (complete_hours * 60)).floor
-    complete_seconds = (seconds - (minutes.floor * 60)).floor
-
-    mins = ((complete_minutes / 3.0) * 5) / 100.0
-    secs = ((complete_seconds / 3.0)) * 5 / 10_000.0
-
-    afas_duration = complete_hours + mins + secs
-
     afas_project = /\((.*)\)/.match(project).to_a[1]
     afas_description = description
 
@@ -55,17 +42,17 @@ toggl_records.each do |toggl_record|
       afas_project = 'ALG'
     end
 
-    afas_duration -= 0.5 if project == 'Lunch'
-
-    next unless afas_duration > 0
-
     afas_time_entry = Afas::InSite::TimeEntry.new(start_time.to_date,
                                           afas_project,
                                           'Wst',
                                           tags.first,
-                                          (afas_duration * 20).round / 20.0,
+                                          nil,
                                           'N',
                                           afas_description)
+
+    afas_time_entry.set_duration_from_milliseconds(duration)
+
+    next if afas_time_entry.duration > 0
 
     # Afas Insite
     session.visit Afas::InSite::URL
