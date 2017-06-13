@@ -1,17 +1,15 @@
 require 'capybara'
-require 'csv'
 require 'json'
 require 'togglv8'
+
+Dir.glob('./lib/**/*.rb').each { |file| require file }
 
 Capybara.default_max_wait_time = 10
 
 session = Capybara::Session.new(:selenium)
 
 # Read environment
-afas_username = ENV.fetch('AFAS_USERNAME')
-afas_password = ENV.fetch('AFAS_PASSWORD')
-
-toggl_api_token = ENV.fetch('TOGGL_API_TOKEN')
+toggl_api_token = ENV.fetch('TOGGL_API_TOKEN').freeze
 toggl_reports_since = Time.strptime(ENV.fetch('SINCE'), "%Y-%m-%dT%H:%M:%s").to_datetime
 toggl_reports_until = Time.strptime(ENV.fetch('UNTIL'), "%Y-%m-%dT%H:%M:%s").to_datetime
 
@@ -61,43 +59,35 @@ toggl_records.each do |toggl_record|
 
     next unless afas_duration > 0
 
-    afas_record = {
-      datum: start_time.strftime("%d-%m-%Y"),
-      project: afas_project,
-      type: 'Wst',
-      code: tags.first,
-      aantal: (afas_duration * 20).round / 20.0,
-      urensoort: 'N',
-      omschrijving: afas_description
-    }
+    afas_time_entry = Afas::InSite::TimeEntry.new(start_time.to_date,
+                                          afas_project,
+                                          'Wst',
+                                          tags.first,
+                                          (afas_duration * 20).round / 20.0,
+                                          'N',
+                                          afas_description)
 
     # Afas Insite
-    session.visit "https://74002.afasinsite.nl/"
-
-    # Inloggen
-    if session.has_content?('Inloggen')
-      session.fill_in "Gebruikersnaam", with: afas_username
-      session.fill_in "Wachtwoord", with: afas_password
-      session.click_on "Inloggen"
-    end
+    session.visit Afas::InSite::URL
+    Afas::InSite::SignIn.exec(session)
 
     # Uren openen
     session.click_on "Projecten", match: :first
     session.find('[title="Uren boeken"]').click
 
     # Week selecteren
-    session.fill_in "Jaar", with: start_time.year
-    session.fill_in "Periode", with: start_time.cweek
+    session.fill_in "Jaar", with: afas_time_entry.year
+    session.fill_in "Periode", with: afas_time_entry.week
     session.click_on "Selecteren"
 
     # Entry invoeren
-    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_DaTi_MainControl', with: afas_record[:datum]
-    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_PrId_MainControl', with: afas_record[:project]
-    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_VaIt_MainControl', with: afas_record[:type]
-    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_BiId_MainControl', with: afas_record[:code]
-    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_QuUn_MainControl', with: afas_record[:aantal]
-    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_StId_MainControl', with: afas_record[:urensoort]
-    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_Ds_MainControl', with: afas_record[:omschrijving]
+    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_DaTi_MainControl', with: afas_time_entry.date.strftime("%d-%m-%Y")
+    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_PrId_MainControl', with: afas_time_entry.project
+    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_VaIt_MainControl', with: afas_time_entry.type_of_work
+    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_BiId_MainControl', with: afas_time_entry.code
+    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_QuUn_MainControl', with: afas_time_entry.duration
+    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_StId_MainControl', with: afas_time_entry.type_of_hours
+    session.fill_in 'P_C_W_Entry_Detail_EditGrid_re_Ds_MainControl',   with: afas_time_entry.description
 
     sleep 3
 
@@ -111,7 +101,7 @@ toggl_records.each do |toggl_record|
   rescue => e
     puts "###############################"
     puts toggl_record
-    puts afas_record
+    puts afas_time_entry
     puts e.message
     puts e.backtrace
     retry
