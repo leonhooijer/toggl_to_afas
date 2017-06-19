@@ -43,7 +43,21 @@ module Afas
         session.find('#P_C_W_Entry_Footer_LAY_PtPrj_Ds_MainControl').value == ''
       end
 
-      def fill_in_working_hours(time_entry)
+      def fill_in_working_hours(time_entries)
+        entries_grouped_by_period = {}
+
+        time_entries.each do |time_entry|
+          if entries_grouped_by_period[time_entry.year].to_h[time_entry.week]
+            entries_grouped_by_period[time_entry.year].to_h[time_entry.week] << time_entry
+          elsif entries_grouped_by_period[time_entry.year]
+            entries_grouped_by_period[time_entry.year][time_entry.week] = [time_entry]
+          else
+            entries_grouped_by_period[time_entry.year] = { week => [time_entry] }
+          end
+        end
+
+        puts entries_grouped_by_period
+
         open_working_hours_form
         select_working_hours_period(time_entry.year, time_entry.week)
         fill_in_time_entry(time_entry)

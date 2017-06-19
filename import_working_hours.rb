@@ -26,7 +26,7 @@ toggl_records = toggl_reports_api.details(:json,
                                           until: toggl_reports_until,
                                           order_desc: 'off')
 
-toggl_records.each do |toggl_record|
+afas_time_entries = toggl_records.map do |toggl_record|
   description = toggl_record['description']
   project = toggl_record['project']
   tags = toggl_record['tags']
@@ -53,9 +53,11 @@ toggl_records.each do |toggl_record|
 
   next unless afas_time_entry.duration > 0
 
-  click_bot = Afas::InSite::ClickBot.new(session)
-  click_bot.sign_in
-  click_bot.fill_in_working_hours(afas_time_entry)
-
-  session.driver.quit
+  afas_time_entry
 end
+
+click_bot = Afas::InSite::ClickBot.new(session)
+click_bot.sign_in
+click_bot.fill_in_working_hours(afas_time_entries)
+
+session.driver.quit
