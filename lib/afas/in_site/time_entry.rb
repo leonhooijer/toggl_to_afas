@@ -37,7 +37,7 @@ module Afas
 
         afas_duration = complete_hours + mins + secs
 
-        afas_duration -= 0.5 if project == 'Lunch'
+        afas_duration -= 0.5 if description == 'Lunch'
 
         @duration = (afas_duration * 20).round / 20.0
       end
