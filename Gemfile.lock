@@ -1,0 +1,32 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    awesome_print (1.8.0)
+    childprocess (0.7.1)
+      ffi (~> 1.0, >= 1.0.11)
+    faraday (0.12.2)
+      multipart-post (>= 1.2, < 3)
+    ffi (1.9.18)
+    logger (1.2.8)
+    multipart-post (2.0.0)
+    oj (3.3.4)
+    rubyzip (1.2.1)
+    selenium-webdriver (3.4.4)
+      childprocess (~> 0.5)
+      rubyzip (~> 1.0)
+    togglv8 (1.2.1)
+      faraday
+      logger
+      oj
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  awesome_print
+  bundler
+  selenium-webdriver
+  togglv8
+
+BUNDLED WITH
+   1.15.3
