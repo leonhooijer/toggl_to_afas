@@ -4,14 +4,15 @@ GEM
     awesome_print (1.8.0)
     childprocess (0.7.1)
       ffi (~> 1.0, >= 1.0.11)
-    faraday (0.12.2)
+    faraday (0.13.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.18)
+    ffi (1.9.18-x64-mingw32)
     logger (1.2.8)
     multipart-post (2.0.0)
-    oj (3.3.4)
+    oj (3.3.5)
     rubyzip (1.2.1)
-    selenium-webdriver (3.4.4)
+    selenium-webdriver (3.5.1)
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
     togglv8 (1.2.1)
@@ -21,6 +22,7 @@ GEM
 
 PLATFORMS
   ruby
+  x64-mingw32
 
 DEPENDENCIES
   awesome_print
