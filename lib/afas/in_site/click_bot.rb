@@ -29,6 +29,7 @@ module Afas
 
       def fill_in_time_entry(time_entry)
         session.fill_in 'Window_0_Entry_Detail_Detail_DaTi', with: time_entry.date.strftime('%d-%m-%Y')
+        fill_in_date(time_entry.date.strftime('%d-%m-%Y'))
         session.fill_in 'Window_0_Entry_Detail_Detail_PrId', with: time_entry.project
         session.fill_in 'Window_0_Entry_Detail_Detail_VaIt', with: time_entry.type_of_work
         session.fill_in 'Window_0_Entry_Detail_Detail_BiId', with: time_entry.code
@@ -40,6 +41,13 @@ module Afas
       def fill_in_duration(duration)
         until session.find('#Window_0_Entry_Detail_Detail_QuUn').value == duration.to_s
           session.fill_in 'Window_0_Entry_Detail_Detail_QuUn', with: duration
+          sleep 1
+        end
+      end
+
+      def fill_in_date(date)
+        until session.find('#Window_0_Entry_Detail_Detail_DaTi').value == date.to_s
+          session.fill_in 'Window_0_Entry_Detail_Detail_DaTi', with: date
           sleep 1
         end
       end
