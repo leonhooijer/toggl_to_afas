@@ -58,6 +58,9 @@ begin
   end
 
   click_bot = Afas::InSite::ClickBot.new(session)
+  click_bot.maximize_window
+  click_bot.open_afas_insite
+  click_bot.close_amber_alert
   click_bot.sign_in
   click_bot.fill_in_working_hours(afas_time_entries)
 ensure

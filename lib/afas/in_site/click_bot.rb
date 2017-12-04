@@ -104,12 +104,28 @@ module Afas
         end
       end
 
-      def sign_in
+      def open_afas_insite
         session.visit Afas::InSite::URL
+      end
+
+      def maximize_window
+        session.driver.browser.manage.window.maximize
+      end
+
+      def sign_in
         return unless session.has_content?('Inloggen')
         session.fill_in 'Gebruikersnaam', with: Afas::InSite::USERNAME
         session.fill_in 'Wachtwoord', with: Afas::InSite::PASSWORD
         session.click_on 'Inloggen'
+      end
+
+      def close_amber_alert
+        3.times do
+          close_amber_alert_link = session.first("#P_CH_W_Amber_MarkAsRead")
+          close_amber_alert_link.click unless close_amber_alert_link.nil?
+          break unless close_amber_alert_link.nil?
+          sleep 1
+        end
       end
     end
   end
