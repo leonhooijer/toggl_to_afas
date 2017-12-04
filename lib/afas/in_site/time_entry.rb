@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Afas
   module InSite
     class TimeEntry
@@ -37,15 +39,13 @@ module Afas
 
         afas_duration = complete_hours + mins + secs
 
-        afas_duration -= 0.5 if description == 'Lunch'
+        afas_duration -= 0.5 if description == "Lunch"
 
         @duration = (afas_duration * 20).round / 20.0
       end
 
       class << self
-        def from_toggl_time_entry(toggl_time_entry)
-
-        end
+        def from_toggl_time_entry(toggl_time_entry); end
       end
     end
   end
