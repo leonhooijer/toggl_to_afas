@@ -2,12 +2,9 @@
 
 source "https://rubygems.org"
 
-gem "bundler"
-
-gem "togglv8"
-
 gem "awesome_print"
-
-gem "selenium-webdriver"
-
+gem "bundler"
+gem "capybara"
 gem "rubocop"
+gem "selenium-webdriver"
+gem "togglv8"

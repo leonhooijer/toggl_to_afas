@@ -122,12 +122,9 @@ module Afas
       end
 
       def close_amber_alert
-        3.times do
-          close_amber_alert_link = session.first("#P_CH_W_Amber_MarkAsRead")
-          close_amber_alert_link&.click
-          break unless close_amber_alert_link.nil?
-          sleep 1
-        end
+        close_amber_alert_link = session.first("#P_CH_W_Amber_MarkAsRead", minimum: 0, maximum: 1)
+        return if close_amber_alert_link.nil?
+        close_amber_alert_link.click
       end
     end
   end
