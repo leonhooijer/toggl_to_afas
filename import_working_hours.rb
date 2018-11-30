@@ -66,5 +66,5 @@ begin
   click_bot.sign_in
   click_bot.fill_in_working_hours(afas_time_entries)
 ensure
-  session.driver.quit
+  session.driver.quit if session
 end
