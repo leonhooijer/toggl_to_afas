@@ -2,6 +2,8 @@
 
 require "capybara"
 require "json"
+require "rails"
+require "selenium-webdriver"
 require "togglv8"
 
 begin
