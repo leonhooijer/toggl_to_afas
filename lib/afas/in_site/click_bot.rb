@@ -116,9 +116,13 @@ module Afas
 
       def sign_in
         return unless session.has_content?("Inloggen")
-        session.fill_in "Gebruikersnaam", with: Afas::InSite::USERNAME
-        session.fill_in "Wachtwoord", with: Afas::InSite::PASSWORD
-        session.click_on "Inloggen"
+        session.fill_in "Email", with: Afas::InSite::USERNAME
+        session.click_on "Volgende"
+        session.fill_in "Password", with: Afas::InSite::PASSWORD
+        session.click_on "Volgende"
+        passcode = gets.chomp
+        session.fill_in "Code", with: passcode
+        session.click_on "Volgende"
       end
 
       def close_amber_alert
