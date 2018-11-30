@@ -1,6 +1,12 @@
 AllCops:
   TargetRubyVersion: 2.5
 
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+Metrics/LineLength:
+  Max: 120
+
 Rails:
   Enabled: false
 
