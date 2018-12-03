@@ -102,14 +102,6 @@ module Afas
         entries_grouped_by_year
       end
 
-      def open_afas_in_site
-        session.visit(Afas::InSite::URL)
-      end
-
-      def maximize_window
-        session.driver.browser.manage.window.maximize
-      end
-
       def sign_in
         return unless session.has_css?("div", class: "header", text: "Inloggen bij AFAS Online")
 
@@ -135,8 +127,7 @@ module Afas
       end
 
       def close_amber_alert
-        close_amber_alert_link = session.first("#P_CH_W_Amber_MarkAsRead", minimum: 0, maximum: 1)
-        close_amber_alert_link&.click
+        session.first("#P_CH_W_Amber_MarkAsRead", minimum: 0, maximum: 1)&.click
       end
     end
   end

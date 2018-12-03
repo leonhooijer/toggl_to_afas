@@ -74,9 +74,9 @@ begin
     afas_time_entry
   end
 
+  session.driver.browser.manage.window.maximize
+  session.visit(Afas::InSite::URL)
   click_bot = Afas::InSite::ClickBot.new(session)
-  click_bot.maximize_window
-  click_bot.open_afas_in_site
   click_bot.close_amber_alert
   click_bot.sign_in
   click_bot.open_working_hours_form
