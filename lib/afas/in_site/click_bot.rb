@@ -121,13 +121,24 @@ module Afas
       end
 
       def sign_in
-        return unless session.has_content?("Inloggen")
+        return unless session.has_css?("div", class: "header", text: "Inloggen bij AFAS Online")
 
-        session.fill_in "Email", with: Afas::InSite::USERNAME
+        enter_email(Afas::InSite::USERNAME)
+        enter_password(Afas::InSite::PASSWORD)
+        enter_passcode(gets.chomp)
+      end
+
+      def enter_email(email)
+        session.fill_in "Email", with: email
         session.click_on "Volgende"
-        session.fill_in "Password", with: Afas::InSite::PASSWORD
+      end
+
+      def enter_password(password)
+        session.fill_in "Password", with: password
         session.click_on "Volgende"
-        passcode = gets.chomp
+      end
+
+      def enter_passcode(passcode)
         session.fill_in "Code", with: passcode
         session.click_on "Volgende"
       end
