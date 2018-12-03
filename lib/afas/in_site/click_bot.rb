@@ -72,8 +72,6 @@ module Afas
       end
 
       def fill_in_working_hours(time_entries)
-        open_working_hours_form
-
         time_entries_by_year_and_week(time_entries).each do |year, weeks|
           weeks.each do |week, time_entries_for_period|
             select_working_hours_period(year, week)
@@ -84,16 +82,13 @@ module Afas
               fill_in_time_entry(time_entry)
               raise "Project description field was not updated." unless project_description_updated?
 
-              sleep 1
               add_time_entry
               sleep 1
             end
 
-            sleep 1
             remove_time_entry
             sleep 1
             save_time_entries
-            sleep 5
           end
         end
       end
@@ -107,7 +102,7 @@ module Afas
         entries_grouped_by_year
       end
 
-      def open_afas_insite
+      def open_afas_in_site
         session.visit(Afas::InSite::URL)
       end
 
