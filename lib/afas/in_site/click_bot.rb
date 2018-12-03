@@ -2,6 +2,7 @@
 
 module Afas
   module InSite
+    # Capybara click bot to enter data in Afas InSite.
     class ClickBot
       attr_accessor :session
 

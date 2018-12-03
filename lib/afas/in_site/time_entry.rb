@@ -2,6 +2,7 @@
 
 module Afas
   module InSite
+    # Afas InSite formatted time entries.
     class TimeEntry
       attr_accessor :id, :date, :project, :type_of_work, :code, :duration,
                     :type_of_hours, :description

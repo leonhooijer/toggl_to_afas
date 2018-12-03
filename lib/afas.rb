@@ -2,5 +2,6 @@
 
 require_relative "afas/in_site"
 
+# Wrapper module for Afas classes.
 module Afas
 end
