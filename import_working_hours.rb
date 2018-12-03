@@ -74,7 +74,7 @@ begin
 
     afas_time_entry.duration_from_milliseconds(duration)
 
-    next unless afas_time_entry.positive?
+    next unless afas_time_entry.duration.positive?
 
     afas_time_entry
   end
