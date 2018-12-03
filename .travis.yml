@@ -10,8 +10,6 @@ rvm:
 gemfile:
   - Gemfile
 
-bundler_args: ""
-
 before_script:
   - bundle exec licensed cache
 
