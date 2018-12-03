@@ -35,7 +35,7 @@ module Afas
         fill_in_field("PrId", time_entry.project)
         fill_in_field("VaIt", time_entry.type_of_work)
         fill_in_field("BiId", time_entry.code)
-        fill_in_field("QuUn", time_entry.afas_duration)
+        fill_in_field("QuUn", time_entry.afas_duration.round(2))
         fill_in_field("StId", time_entry.type_of_hours)
         fill_in_field("Ds",   "#{time_entry.description} (TogglID: #{time_entry.id})")
       end
