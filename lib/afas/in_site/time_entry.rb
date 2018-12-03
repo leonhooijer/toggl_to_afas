@@ -3,11 +3,12 @@
 module Afas
   module InSite
     class TimeEntry
-      attr_accessor :date, :project, :type_of_work, :code, :duration,
+      attr_accessor :id, :date, :project, :type_of_work, :code, :duration,
                     :type_of_hours, :description
 
-      def initialize(date, project, type_of_work, code, duration, type_of_hours,
+      def initialize(id, date, project, type_of_work, code, duration, type_of_hours,
                      description)
+        @id = id
         @date = date
         @project = project
         @type_of_work = type_of_work

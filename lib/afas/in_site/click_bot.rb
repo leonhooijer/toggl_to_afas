@@ -30,27 +30,27 @@ module Afas
       end
 
       def fill_in_time_entry(time_entry)
-        session.fill_in "Window_0_Entry_Detail_Detail_DaTi", with: time_entry.date.strftime("%d-%m-%Y")
-        fill_in_date(time_entry.date.strftime("%d-%m-%Y"))
-        session.fill_in "Window_0_Entry_Detail_Detail_PrId", with: time_entry.project
-        session.fill_in "Window_0_Entry_Detail_Detail_VaIt", with: time_entry.type_of_work
-        session.fill_in "Window_0_Entry_Detail_Detail_BiId", with: time_entry.code
-        fill_in_duration(time_entry.duration)
-        session.fill_in "Window_0_Entry_Detail_Detail_StId", with: time_entry.type_of_hours
-        session.fill_in "Window_0_Entry_Detail_Detail_Ds",   with: time_entry.description
+        fill_in_field("DaTi", time_entry.date.strftime("%d-%m-%Y"))
+        fill_in_field("PrId", time_entry.project)
+        fill_in_field("VaIt", time_entry.type_of_work)
+        fill_in_field("BiId", time_entry.code)
+        fill_in_field("QuUn", time_entry.duration)
+        fill_in_field("StId", time_entry.type_of_hours)
+        fill_in_field("Ds",   "#{time_entry.description} (TogglID: #{time_entry.id})")
       end
 
-      def fill_in_duration(duration)
-        until session.find("#Window_0_Entry_Detail_Detail_QuUn").value == duration.to_s
-          session.fill_in "Window_0_Entry_Detail_Detail_QuUn", with: duration
+      def fill_in_field(field_id, value)
+        return if value.nil? || value == ""
+
+        until session.find("#Window_0_Entry_Detail_Detail_#{field_id}").value == value.to_s
+          session.fill_in "Window_0_Entry_Detail_Detail_#{field_id}", with: value
           sleep 1
         end
       end
 
-      def fill_in_date(date)
-        until session.find("#Window_0_Entry_Detail_Detail_DaTi").value == date.to_s
-          session.fill_in "Window_0_Entry_Detail_Detail_DaTi", with: date
-          sleep 1
+      def entry_exists?(time_entry)
+        session.using_wait_time(0) do
+          session.has_css?(".valuecontrol", text: "(TogglID: #{time_entry.id})")
         end
       end
 
@@ -90,6 +90,8 @@ module Afas
             select_working_hours_period(year, week)
 
             time_entries_for_period.each do |time_entry|
+              next if entry_exists?(time_entry)
+
               fill_in_time_entry(time_entry)
               raise "Project description field was not updated." unless project_description_updated?
               sleep 1

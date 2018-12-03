@@ -11,12 +11,28 @@ begin
 
   Capybara.default_max_wait_time = 10
 
-  session = Capybara::Session.new(:selenium)
+  Capybara.register_driver(:selenium_firefox) do |app|
+    profile = Selenium::WebDriver::Firefox::Profile.new
+    profile["extensions.update.enabled"] = false
+    profile["app.update.enabled"] = false
+    profile["app.update.auto"] = false
+    Capybara::Selenium::Driver.new(app, browser: :firefox, profile: profile)
+  end
+
+  Capybara.default_driver = :selenium_firefox
+
+  session = Capybara::Session.new(:selenium_firefox)
 
   # Read environment
   toggl_api_token = ENV.fetch("TOGGL_API_TOKEN").freeze
-  toggl_reports_since = Time.parse(ENV.fetch("SINCE")).to_datetime
-  toggl_reports_until = Time.parse(ENV.fetch("UNTIL")).to_datetime
+  toggl_reports_since = Time.parse(ENV["SINCE"]).to_datetime if ENV["SINCE"]
+  toggl_reports_until = Time.parse(ENV["UNTIL"]).to_datetime if ENV["UNTIL"]
+  year = ENV.fetch("YEAR", Time.new.year).to_i
+  week = ENV.fetch("WEEK", -1).to_i
+  if week > 0
+    toggl_reports_since ||= Date.commercial(year, week).to_datetime
+    toggl_reports_until ||= Date.commercial(year, week).to_datetime.end_of_week.end_of_day
+  end
 
   # Toggl
   toggl_api = TogglV8::API.new(toggl_api_token)
@@ -32,6 +48,7 @@ begin
                                             order_desc: "off")
 
   afas_time_entries = toggl_records.map do |toggl_record|
+    id = toggl_record["id"]
     description = toggl_record["description"]
     project = toggl_record["project"]
     tags = toggl_record["tags"]
@@ -46,7 +63,8 @@ begin
       afas_project = "ALG"
     end
 
-    afas_time_entry = Afas::InSite::TimeEntry.new(start_time.to_date,
+    afas_time_entry = Afas::InSite::TimeEntry.new(id,
+                                                  start_time.to_date,
                                                   afas_project,
                                                   "Wst",
                                                   tags.first,
