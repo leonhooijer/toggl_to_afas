@@ -22,12 +22,28 @@ module Afas
         session.find("#Window_0_Entry_Detail_Detail_DaTi")
       end
 
+      def fill_in_time_entries(year, week, time_entries)
+        select_working_hours_period(year, week)
+        time_entries.each do |time_entry|
+          next if entry_exists?(time_entry)
+
+          fill_in_time_entry(time_entry)
+          raise "Project description field was not updated." unless project_description_updated?
+
+          add_time_entry
+        end
+        remove_time_entry
+        save_time_entries
+      end
+
       def add_time_entry
         session.find("#P_C_W_Entry_Detail_E3_ButtonEntryWebPart_AddRow_E3").click
+        sleep 1
       end
 
       def remove_time_entry
         session.find("#P_C_W_Entry_Detail_E5_ButtonEntryWebPart_DeleteRow_E5").click
+        sleep 1
       end
 
       def fill_in_time_entry(time_entry)
@@ -41,8 +57,6 @@ module Afas
       end
 
       def fill_in_field(field_id, value)
-        return if value.nil? || value == ""
-
         until session.find("#Window_0_Entry_Detail_Detail_#{field_id}").value == value.to_s
           session.fill_in "Window_0_Entry_Detail_Detail_#{field_id}", with: value
           sleep 1
@@ -50,9 +64,7 @@ module Afas
       end
 
       def entry_exists?(time_entry)
-        session.using_wait_time(0) do
-          session.has_css?(".valuecontrol", text: "(TogglID: #{time_entry.id})")
-        end
+        session.using_wait_time(0) { session.has_css?(".valuecontrol", text: "(TogglID: #{time_entry.id})") }
       end
 
       def save_time_entries
@@ -65,29 +77,14 @@ module Afas
         3.times do
           sleep(1) if session.find("#Window_0_Entry_Footer_Detail_LAY_PtPrj_Ds").value == ""
         end
-
+        sleep 1
         session.find("#Window_0_Entry_Footer_Detail_LAY_PtPrj_Ds").value != ""
       end
 
       def fill_in_working_hours(time_entries)
         time_entries_by_year_and_week(time_entries).each do |year, weeks|
           weeks.each do |week, time_entries_for_period|
-            select_working_hours_period(year, week)
-
-            time_entries_for_period.each do |time_entry|
-              next if entry_exists?(time_entry)
-
-              fill_in_time_entry(time_entry)
-              raise "Project description field was not updated." unless project_description_updated?
-
-              sleep 1
-              add_time_entry
-              sleep 1
-            end
-
-            remove_time_entry
-            sleep 1
-            save_time_entries
+            fill_in_time_entries(year, week, time_entries_for_period)
           end
         end
       end
@@ -95,8 +92,7 @@ module Afas
       def time_entries_by_year_and_week(time_entries)
         entries_grouped_by_year = time_entries.group_by(&:year)
         entries_grouped_by_year.each do |year, entries|
-          entries_grouped_by_week = entries.group_by(&:week)
-          entries_grouped_by_year[year] = entries_grouped_by_week
+          entries_grouped_by_year[year] = entries.group_by(&:week)
         end
         entries_grouped_by_year
       end
