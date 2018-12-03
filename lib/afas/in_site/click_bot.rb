@@ -63,6 +63,7 @@ module Afas
       def project_description_updated?
         3.times do
           break if session.find("#Window_0_Entry_Footer_Detail_LAY_PtPrj_Ds").value != ""
+
           sleep 1
         end
 
@@ -74,6 +75,7 @@ module Afas
 
         time_entries.each do |time_entry|
           next unless time_entry
+
           if entries_grouped_by_period[time_entry.year].to_h[time_entry.week]
             entries_grouped_by_period[time_entry.year].to_h[time_entry.week] << time_entry
           elsif entries_grouped_by_period[time_entry.year]
@@ -94,6 +96,7 @@ module Afas
 
               fill_in_time_entry(time_entry)
               raise "Project description field was not updated." unless project_description_updated?
+
               sleep 1
               add_time_entry
               sleep 1
@@ -118,6 +121,7 @@ module Afas
 
       def sign_in
         return unless session.has_content?("Inloggen")
+
         session.fill_in "Email", with: Afas::InSite::USERNAME
         session.click_on "Volgende"
         session.fill_in "Password", with: Afas::InSite::PASSWORD
@@ -130,6 +134,7 @@ module Afas
       def close_amber_alert
         close_amber_alert_link = session.first("#P_CH_W_Amber_MarkAsRead", minimum: 0, maximum: 1)
         return if close_amber_alert_link.nil?
+
         close_amber_alert_link.click
       end
     end
