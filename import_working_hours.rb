@@ -6,9 +6,9 @@ require "rails"
 require "selenium-webdriver"
 require "togglv8"
 
-begin
-  Dir.glob("./lib/**/*.rb").each { |file| require file }
+require_relative "lib/afas"
 
+begin
   Capybara.default_max_wait_time = 10
 
   Capybara.register_driver(:selenium_firefox) do |app|
