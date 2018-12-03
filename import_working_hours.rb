@@ -36,7 +36,7 @@ begin
 
   # Toggl
   toggl_api = TogglV8::API.new(toggl_api_token)
-  user = toggl_api.me(all = true)
+  user = toggl_api.me(all = true) # rubocop:disable Lint/UselessAssignment
   workspaces = toggl_api.my_workspaces(user)
   workspace = workspaces.select { |w| w["name"] == "De Praktijk Index" }.first
 
