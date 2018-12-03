@@ -21,6 +21,8 @@ ignored:
     - rubyzip
     - togglv8
     - xpath
+    # TODO: These mis the license text. Maybe send PR's to add those.
+    - bundler
 
 reviewed:
   rubygem:
