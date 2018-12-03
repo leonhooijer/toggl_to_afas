@@ -72,23 +72,9 @@ module Afas
       end
 
       def fill_in_working_hours(time_entries)
-        entries_grouped_by_period = {}
-
-        time_entries.each do |time_entry|
-          next unless time_entry
-
-          if entries_grouped_by_period[time_entry.year].to_h[time_entry.week]
-            entries_grouped_by_period[time_entry.year].to_h[time_entry.week] << time_entry
-          elsif entries_grouped_by_period[time_entry.year]
-            entries_grouped_by_period[time_entry.year][time_entry.week] = [time_entry]
-          else
-            entries_grouped_by_period[time_entry.year] = { time_entry.week => [time_entry] }
-          end
-        end
-
         open_working_hours_form
 
-        entries_grouped_by_period.each do |year, weeks|
+        time_entries_by_year_and_week(time_entries).each do |year, weeks|
           weeks.each do |week, time_entries_for_period|
             select_working_hours_period(year, week)
 
@@ -112,8 +98,17 @@ module Afas
         end
       end
 
+      def time_entries_by_year_and_week(time_entries)
+        entries_grouped_by_year = time_entries.group_by(&:year)
+        entries_grouped_by_year.each do |year, entries|
+          entries_grouped_by_week = entries.group_by(&:week)
+          entries_grouped_by_year[year] = entries_grouped_by_week
+        end
+        entries_grouped_by_year
+      end
+
       def open_afas_insite
-        session.visit Afas::InSite::URL
+        session.visit(Afas::InSite::URL)
       end
 
       def maximize_window
@@ -125,6 +120,7 @@ module Afas
 
         fill_in_email(Afas::InSite::USERNAME)
         fill_in_password(Afas::InSite::PASSWORD)
+        puts "Please enter the passcode you received through SMS:"
         fill_in_passcode(gets.chomp)
       end
 
@@ -145,9 +141,7 @@ module Afas
 
       def close_amber_alert
         close_amber_alert_link = session.first("#P_CH_W_Amber_MarkAsRead", minimum: 0, maximum: 1)
-        return if close_amber_alert_link.nil?
-
-        close_amber_alert_link.click
+        close_amber_alert_link&.click
       end
     end
   end

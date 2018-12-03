@@ -56,10 +56,9 @@ begin
     start_time = Time.parse(toggl_record["start"])
 
     afas_project = /\((.*)\)/.match(project).to_a[1]
-    afas_description = description
 
     unless afas_project
-      afas_description = [project, description].reject { |d| d == "" }.join(": ")
+      description = [project, description].reject { |d| d == "" }.join(": ")
       afas_project = "ALG"
     end
 
@@ -68,7 +67,7 @@ begin
                                                   afas_project,
                                                   tags.first,
                                                   duration,
-                                                  afas_description)
+                                                  description)
 
     next unless afas_time_entry.afas_duration.positive?
 
@@ -80,7 +79,7 @@ begin
   click_bot.open_afas_insite
   click_bot.close_amber_alert
   click_bot.sign_in
-  click_bot.fill_in_working_hours(afas_time_entries)
+  click_bot.fill_in_working_hours(afas_time_entries.compact)
 ensure
   session&.driver&.quit
 end
