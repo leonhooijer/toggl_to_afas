@@ -9,6 +9,7 @@ module Afas
 
       attr_accessor :id, :date, :project, :type_of_work, :code, :toggl_duration, :type_of_hours, :description
 
+      # rubocop:disable Metrics/ParameterLists
       def initialize(id, date, project, code, toggl_duration, description)
         @id = id
         @date = date
@@ -19,6 +20,7 @@ module Afas
         @type_of_hours = TYPE_OF_HOURS
         @description = description
       end
+      # rubocop:enable Metrics/ParameterLists
 
       def year
         date.year
