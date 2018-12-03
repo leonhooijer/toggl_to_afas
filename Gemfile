@@ -3,9 +3,15 @@
 source "https://rubygems.org"
 
 gem "awesome_print"
-gem "bundler"
 gem "capybara"
 gem "rails"
-gem "rubocop"
 gem "selenium-webdriver"
 gem "togglv8"
+
+group :development do
+  gem "bundler"
+  gem "travis"
+  gem "licensed"
+  gem "bundler-audit"
+  gem "rubocop"
+end

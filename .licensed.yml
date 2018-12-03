@@ -1,0 +1,31 @@
+name: "Toggl2Afas"
+
+cache_path: "tmp/licensed"
+
+sources:
+  rubygem: true
+
+allowed:
+  - mit
+  - apache-2.0
+  - bsd-2-clause
+  - bsd-3-clause
+  - cc0-1.0
+  - unlicense
+
+ignored:
+  rubygem:
+    - awesome_print
+    - ffi # Custom license: https://github.com/ffi/ffi/blob/master/LICENSE
+    - logger
+    - rubyzip
+    - togglv8
+    - xpath
+
+reviewed:
+  rubygem:
+    - bundler # MIT: https://github.com/bundler/bundler/blob/master/LICENSE.md
+    - concurrent-ruby # MIT: https://github.com/ruby-concurrency/concurrent-ruby/blob/master/LICENSE.md
+    - nokogiri # MIT: https://github.com/sparklemotion/nokogiri/blob/master/LICENSE.md
+    - method_source # MIT: https://github.com/banister/method_source/blob/master/LICENSE
+    - rack # MIT: https://github.com/rack/rack/blob/master/MIT-LICENSE
