@@ -23,4 +23,4 @@ before_script:
 script:
   - bundle exec bundle-audit check -qu
   - bundle exec licensed status
-  - bundle exec rubocop -f s -DPR --color
+  - bundle exec rubocop -f s -DP --color

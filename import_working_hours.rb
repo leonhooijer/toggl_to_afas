@@ -29,7 +29,7 @@ begin
   toggl_reports_until = Time.parse(ENV["UNTIL"]).to_datetime if ENV["UNTIL"]
   year = ENV.fetch("YEAR", Time.new.year).to_i
   week = ENV.fetch("WEEK", -1).to_i
-  if week > 0
+  if week.positive?
     toggl_reports_since ||= Date.commercial(year, week).to_datetime
     toggl_reports_until ||= Date.commercial(year, week).to_datetime.end_of_week.end_of_day
   end
@@ -74,7 +74,7 @@ begin
 
     afas_time_entry.duration_from_milliseconds(duration)
 
-    next unless afas_time_entry.duration > 0
+    next unless afas_time_entry.positive?
 
     afas_time_entry
   end
