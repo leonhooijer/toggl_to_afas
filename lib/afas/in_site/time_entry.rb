@@ -40,7 +40,7 @@ module Afas
       end
 
       def afas_description
-        "#{time_entry.description} (TogglID: #{time_entry.id})"
+        "#{description} (TogglID: #{id})"
       end
     end
   end

@@ -11,7 +11,7 @@ module Afas
       end
 
       def open_working_hours_form
-        session.click_on "Projecten", match: :first
+        session.click_on("Projecten", match: :first)
         session.find('[title="Uren boeken"]').click
       end
 
@@ -63,9 +63,7 @@ module Afas
 
       def project_description_updated?
         3.times do
-          break if session.find("#Window_0_Entry_Footer_Detail_LAY_PtPrj_Ds").value != ""
-
-          sleep 1
+          sleep(1) if session.find("#Window_0_Entry_Footer_Detail_LAY_PtPrj_Ds").value == ""
         end
 
         session.find("#Window_0_Entry_Footer_Detail_LAY_PtPrj_Ds").value != ""
@@ -82,6 +80,7 @@ module Afas
               fill_in_time_entry(time_entry)
               raise "Project description field was not updated." unless project_description_updated?
 
+              sleep 1
               add_time_entry
               sleep 1
             end
