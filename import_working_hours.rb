@@ -66,15 +66,11 @@ begin
     afas_time_entry = Afas::InSite::TimeEntry.new(id,
                                                   start_time.to_date,
                                                   afas_project,
-                                                  "Wst",
                                                   tags.first,
-                                                  nil,
-                                                  "N",
+                                                  duration,
                                                   afas_description)
 
-    afas_time_entry.duration_from_milliseconds(duration)
-
-    next unless afas_time_entry.duration.positive?
+    next unless afas_time_entry.afas_duration.positive?
 
     afas_time_entry
   end
