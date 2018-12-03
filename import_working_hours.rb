@@ -25,13 +25,13 @@ begin
 
   # Read environment
   toggl_api_token = ENV.fetch("TOGGL_API_TOKEN").freeze
-  toggl_reports_since = Time.parse(ENV["SINCE"]).to_datetime if ENV["SINCE"]
-  toggl_reports_until = Time.parse(ENV["UNTIL"]).to_datetime if ENV["UNTIL"]
+  toggl_reports_since = Time.parse(ENV["SINCE"]).to_time if ENV["SINCE"]
+  toggl_reports_until = Time.parse(ENV["UNTIL"]).to_time if ENV["UNTIL"]
   year = ENV.fetch("YEAR", Time.new.year).to_i
   week = ENV.fetch("WEEK", -1).to_i
   if week.positive?
-    toggl_reports_since ||= Date.commercial(year, week).to_datetime
-    toggl_reports_until ||= Date.commercial(year, week).to_datetime.end_of_week.end_of_day
+    toggl_reports_since ||= Date.commercial(year, week).to_time
+    toggl_reports_until ||= Date.commercial(year, week).to_time.end_of_week.end_of_day
   end
 
   # Toggl
